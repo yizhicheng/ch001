@@ -1,0 +1,42 @@
+<html>
+	<head>
+	<meta charset="utf-8"></meta>
+	</head>
+	<link rel="stylesheet" type="text/css" href="css/reset.css"></link>
+	<style>
+    h1{
+        text-align: center;
+        font-size: 32px;
+    }
+    ul li{
+        height: 10px;
+        margin-bottom: 2px;
+        text-align: center;
+        line-height: 10px;
+    }
+	ul >li> div{
+		margin-right: 2px;
+		display: inline-block;
+		width: 10px;
+		height: 10px;
+		background-color: #ccc;
+	}
+    #map {
+        text-align: center;
+    }
+    #map button{
+        width: 60px;
+        margin: 20px;
+    }
+	</style>
+	<body>
+		<h1>俄罗斯方块</h1>
+        <!-- 方块区域 -->
+        <div id="map">
+			行数：<input id="rows" value="16" placeholder="请输入行数"></input><br/>
+			列数：<input id="cols" value="10" placeholder="请输入列数"></input><br/>
+            <button id="start">开始</button>
+        </div>
+	</body>
+	<script type="text/javascript" src="src/sharpClass.js"></script>
+</html>
