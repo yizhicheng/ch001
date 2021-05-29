@@ -6,20 +6,6 @@ function randomInt( v ) {
 function getBlockId( i, j ) {
     return ['rows',i,'cols',j].join('_')
 }
-const Event = {
-    trigger( eventName, obj ) {
-        window.dispatchEvent(new CustomEvent( eventName, {
-            detail: obj
-        }))
-    },
-    on( eventName, callback ) {
-        window.addEventListener( eventName, function( e ) {
-            console.log( '自定义事件数据：', e )
-            callback && callback( e.detail )
-        })
-    }
-}
-
 const colorConfig = ["#ccc","red"]
 /** 形状类 */
 class SharpClass {
@@ -34,8 +20,10 @@ class SharpClass {
     constructor( rows, cols ) {
         this.sharp = randomInt( 7 )
         this.sharpStatus = 0
-        this.sharpCoord = {x: 0, y: Math.ceil( cols/2 ) - 1}
+        this.sharpCoord = {x: 1, y: Math.ceil( cols/2 ) - 1}
         this.setSharpCoordList()
+
+        // return this
     }
     setSharpCoord( i, j ) {
         this.sharpCoord = {x:i, y:j}
@@ -83,33 +71,6 @@ class SharpClass {
     getSharpStatus() {
         return this.sharpStatus
     }
-    /** 事件处理 start */
-    // 变形
-    up() {
-        Event.trigger('clear', this )
-        this.sharpStatus = ++this.sharpStatus % this.sharpCoordList[this.sharp].length
-        this.setSharpCoordList()
-        Event.trigger('refresh', this)
-    }
-    down() {
-        Event.trigger('clear', this )
-        this.sharpCoord.x++
-        this.setSharpCoordList()
-        Event.trigger('refresh', this )
-    }
-    left() {
-        Event.trigger('clear', this)
-        this.sharpCoord.y--
-        this.setSharpCoordList()
-        Event.trigger('refresh', this)
-    }
-    right() {
-        Event.trigger('clear', this)
-        this.sharpCoord.y++
-        this.setSharpCoordList()
-        Event.trigger('refresh', this)
-    }
-    /** 事件处理 end  */
 }
 /** 背景类 */
 class BgClass {
@@ -120,7 +81,6 @@ class BgClass {
         this.cols = cols
         this.rows = rows
         this.initData( rows, cols )
-        // this.initEvent()
     }
     initData( rows, cols ) {
         // 初始化背景的值
@@ -162,108 +122,103 @@ class BgClass {
         return this.data
     }
 }
-/** 数据服务类 */
-class DataService {
-
-}
-class Page1 {
-    // dom节点
-    $dom
-    // window节点
-    $window
-    //构造器
-    constructor() {}
-    // dom创建完成时调用
-    created() {
-
-    }
-    // dom挂载在真正的dom节点上调用
-    mounted() {
-
-    }
-    // dom销毁时调用
-    destory() {
-
-    }
-}
-class IndexPage extends Page1 {
-    constructor() {
-        super()
-    }
-    // 重写created方法
-    created(){
-
-    }
-    //重写挂载方法
-    mounted() {
-
-    }
-}
 class Page {
     // 页面属性
     timer
+    // 当前背景
     bg
+    // 当前形状
+    sharp
     constructor() {
         // 页面拼接虚拟dom
         // dom = template(  )
         // 页面初始化完成之后触发
-        let rows = document.getElementById("rows").value
-        let cols = document.getElementById("cols").value
+        this.rows = document.getElementById("rows").value
+        this.cols = document.getElementById("cols").value
 
-        this.bg = new BgClass( rows, cols )
+        this.bg = new BgClass( this.rows, this.cols )
         document.getElementById("map").appendChild( this.bg.create() )
         document.getElementById("start").addEventListener("click", ( e ) => {
-            this.start( rows, cols )
+            this.start( this.rows, this.cols )
         })
 
         // 监听事件
-        // this.initEvent()
+        this.initEvent()
+        return this
     }
     // 页面方法
-    initEvent(sh) {
-        // 清除图形事件
-        Event.on("clear", (sh)=>{
-            this.refresh(this.bg,sh,0)
-        })
-        // 刷新图形事件
-        Event.on("refresh", ( sh ) =>{
-            this.refresh(this.bg,sh,1)
-        })
+    initEvent() {
+        let eventConfig = [{'keyCode': 37,'funName': 'left'},{'keyCode': 38,'funName': 'up'},{'keyCode': 39,'funName': 'right'},{'keyCode': 40,'funName': 'down'}]
         // 系统事件
         document.addEventListener("keydown",( e ) =>{
-            // console.log( e.keyCode )
-            switch( e.keyCode ) {
-                case 37: sh.left();break;
-                case 38: sh.up();break;
-                case 39: sh.right();break;
-                case 40: sh.down();break;
-            }
+            let funName = eventConfig.filter( item => {
+                return item.keyCode == e.keyCode
+            })
+            funName && this[funName]()
         })
     }
+    up() {
+        let sh = this.sharp
+        sh.sharpStatus = ++sh.sharpStatus % sh.sharpCoordList[sh.sharp].length
+        // sh.setSharpCoordList()
+        // this.refresh( 1 )
+    }
+    down() {
+        // this.refresh( 0 )
+        // let sh = this.sharp
+        this.sharp.sharpCoord.x++
+        // sh.setSharpCoordList()
+        // this.refresh( 1 )
+    }
+    left() {
+        // this.refresh( 0 )
+        // let sh = this.sharp
+        this.sharp.sharpCoord.y--
+        // sh.setSharpCoordList()
+        // this.refresh( 1 )
+    }
+    right() {
+        // this.refresh( 0 )
+        // let sh = this.sharp
+        this.sharp.sharpCoord.y++
+        // sh.setSharpCoordList()
+        // this.refresh( 1 )
+    }
     start( rows, cols ) {
-        let sharp = new SharpClass( rows, cols )
+        // 监听当前形状对象的变化
+        // let obj = this.sharpCoord
+        // wactch 变化
+        let handler = {
+            set( target, key ) {
+                console.log( target, key )
+            },
+            construct(target, args, newTarget){
+                return Reflect.construct(target, args, newTarget)
+            }
+        }
+        let ProxySharpClass = new Proxy(SharpClass,handler)
+        this.sharp = new ProxySharpClass( rows, cols )
         this.timer = setInterval(function(){
-            sharp.down()
-        }, 1000)
-        this.initEvent(sharp)
+            this.down()
+        }.bind(this), 1000)
+        this.initEvent()
     }
     // 私有方法
-    refresh(bg,sh,v) {
+    refresh( v ) {
+        console.log( this.rows, this.cols )
+        let bg = this.bg, sh = this.sharp
         let block = sh.getSharpCoord()
         for( let i=0; i<block.length; i++ ) {
+            block[i].x>=0 &&
+            block[i].y>=0 &&
+            block[i].x<= this.rows &&
+            block[i].y<= this.cols &&
             bg.setData( block[i].x, block[i].y, v )
         }
         bg.draw()
     }
 }
 function main() {
-    new Page({
-        data: {},
-        created() {},
-        mounted() {},
-        methods: {
-
-        }
-    })
+    new Page()
 }
 main()
