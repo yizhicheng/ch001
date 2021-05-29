@@ -81,7 +81,9 @@ class SharpClass {
                 [{x:i+1,y:j-1},{x:i+1,y:j},{x:i+1,y:j+1}], // 锥形
                 [{x:i+1,y:j+1},{x:i+2,y:j}],
                 [{x:i,y:j-1},{x:i,y:j+1},{x:i+1,y:j}],
-                [{x:i,y:j},{x:i+1,y:j},{x:i+1,y:j-1},{x:i+2,y:j}]
+                [{x:i+1,y:j-1},{x:i+2,y:j}]
+            ],[
+                
             ]],
             left: [],
             right: []
