@@ -22,7 +22,6 @@ class SharpClass {
         this.sharpStatus = 0
         this.sharpCoord = {x: 1, y: Math.ceil( cols/2 ) - 1}
         this.setSharpCoordList()
-
         // return this
     }
     setSharpCoord( i, j ) {
@@ -129,83 +128,82 @@ class Page {
     bg
     // 当前形状
     sharp
+    // isStart 是否已经开启
+    isStart
     constructor() {
         // 页面拼接虚拟dom
-        // dom = template(  )
         // 页面初始化完成之后触发
-        this.rows = document.getElementById("rows").value
-        this.cols = document.getElementById("cols").value
-
-        this.bg = new BgClass( this.rows, this.cols )
-        document.getElementById("map").appendChild( this.bg.create() )
         document.getElementById("start").addEventListener("click", ( e ) => {
             this.start( this.rows, this.cols )
+            e.target.innerText = this.isStart?"结束":"开始"
+            // 监听事件
+            this.initEvent()
         })
-
-        // 监听事件
-        this.initEvent()
-        return this
     }
     // 页面方法
     initEvent() {
-        let eventConfig = [{'keyCode': 37,'funName': 'left'},{'keyCode': 38,'funName': 'up'},{'keyCode': 39,'funName': 'right'},{'keyCode': 40,'funName': 'down'}]
+        let eventConfig = {37: 'left', 38: 'up', 39: 'right', 40: 'down'}
         // 系统事件
         document.addEventListener("keydown",( e ) =>{
-            let funName = eventConfig.filter( item => {
-                return item.keyCode == e.keyCode
-            })
-            funName && this[funName]()
+            this[eventConfig[e.keyCode]]()
         })
     }
+    beforeChange() {
+        this.refresh( 0 )
+    }
+    afterChange() {
+        this.sharp.setSharpCoordList()
+        this.refresh( 1 )
+    }
     up() {
+        this.beforeChange()
         let sh = this.sharp
         sh.sharpStatus = ++sh.sharpStatus % sh.sharpCoordList[sh.sharp].length
-        // sh.setSharpCoordList()
-        // this.refresh( 1 )
+        this.afterChange()
     }
     down() {
-        // this.refresh( 0 )
-        // let sh = this.sharp
-        this.sharp.sharpCoord.x++
-        // sh.setSharpCoordList()
-        // this.refresh( 1 )
+        this.beforeChange()
+        let sh = this.sharp
+        sh.sharpCoord.x++
+        this.afterChange()
     }
     left() {
-        // this.refresh( 0 )
-        // let sh = this.sharp
+        this.beforeChange()
         this.sharp.sharpCoord.y--
-        // sh.setSharpCoordList()
-        // this.refresh( 1 )
+        this.afterChange()
     }
     right() {
-        // this.refresh( 0 )
-        // let sh = this.sharp
+        this.beforeChange()
         this.sharp.sharpCoord.y++
-        // sh.setSharpCoordList()
-        // this.refresh( 1 )
+        this.afterChange()
     }
     start( rows, cols ) {
-        // 监听当前形状对象的变化
-        // let obj = this.sharpCoord
-        // wactch 变化
-        let handler = {
-            set( target, key ) {
-                console.log( target, key )
-            },
-            construct(target, args, newTarget){
-                return Reflect.construct(target, args, newTarget)
-            }
+        this.rows = document.getElementById("rows").value
+        this.cols = document.getElementById("cols").value
+        if( !this.isStart ) {
+            this.createBg()
+            let sh = this.sharp = new SharpClass( this.rows, this.cols )
+            this.timer = setInterval(function(){
+                this.down()
+            }.bind(this), 1000)
+            this.initEvent()
+        } else {
+            clearInterval( this.timer )
+            this.clearBg()
         }
-        let ProxySharpClass = new Proxy(SharpClass,handler)
-        this.sharp = new ProxySharpClass( rows, cols )
-        this.timer = setInterval(function(){
-            this.down()
-        }.bind(this), 1000)
-        this.initEvent()
+        this.isStart = !this.isStart
+
+    }
+    createBg() {
+        this.bg = new BgClass( this.rows, this.cols )
+        document.getElementById("map").appendChild( this.bg.create() )
+    }
+    clearBg() {
+        document.getElementsByTagName("ul")[0].remove()
     }
     // 私有方法
     refresh( v ) {
-        console.log( this.rows, this.cols )
+        // console.log( this.rows, this.cols )
         let bg = this.bg, sh = this.sharp
         let block = sh.getSharpCoord()
         for( let i=0; i<block.length; i++ ) {
