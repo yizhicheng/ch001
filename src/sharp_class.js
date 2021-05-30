@@ -7,18 +7,10 @@ function randomInt( v ) {
 class SharpClass {
     // 形状 0 条 1...
     sharp
-    // 形状对应的坐标列表
-    sharpCoordList
     // 形状的中心点
     sharpCoord
     // 形状的状态列表
     sharpStatus
-    // 底部判断坐标
-    bottomCoord
-    // 左部判断坐标
-    leftCoord
-    // 右部判断坐标
-    rightCoord
     constructor( rows, cols ) {
         this.sharp = randomInt( 7 )
         this.sharpStatus = 0
@@ -27,52 +19,20 @@ class SharpClass {
     setSharpCoord( i, j ) {
         this.sharpCoord = {x:i, y:j}
     }
-    getSharpCoordList() {
-        let i = this.sharpCoord.x
-        let j = this.sharpCoord.y
-        return getDatatCoordListByCoord(i,j)['all']
-    }
-    // 获取当前图形边界点列表
-    // getCurrentBdaryCoordList() {
-    //     let list = this.getBdaryCoordList()
-    //     return list[''][ this.sharp ][ this.sharpStatus ]
-    // }
     // 获取边界点的坐标列表
     getBdaryCoordList() {
         let i = this.sharpCoord.x
         let j = this.sharpCoord.y
         return {
+            all: getDatatCoordListByCoord(i,j)['all'],
             bottom: getDatatCoordListByCoord(i,j)['bottom'],
-            // [[
-            //     [{x:i+3,y:j}],
-            //     [{x:i,y:j},{x:i,y:j-1},{x:i,y:j+1},{x:i,y:j+2}]
-            // ],[
-            //     [{x:i+1,y:j},{x:i+1,y:j+1}]
-            // ],[
-            //     [{x:i+1,y:j-1},{x:i+1,y:j},{x:i+1,y:j+1}], // 锥形
-            //     [{x:i+1,y:j+1},{x:i+2,y:j}],
-            //     [{x:i,y:j-1},{x:i,y:j+1},{x:i+1,y:j}],
-            //     [{x:i+1,y:j-1},{x:i+2,y:j}]
-            // ],[
-            //     [{x:i+2,y:j},{x:i+2,y:j-1}], // L形
-            //     [{x:i+1,y:j},{x:i+1,y:j+1},{x:i+1,y:j+2}],
-            //     [{x:i+2,y:j},{x:i,y:j+1}],
-            //     [{x:i,y:j},{x:i,y:j+1},{x:i+1,y:j+2}]
-            // ],[
-            //     [{x:i+2,y:j},{x:i+2,y:j+1}], // J形
-            //     [{x:i,y:j+1},{x:i,y:j+2},{x:i+1,y:j}],
-            //     [{x:i,y:j},{x:i+2,y:j+1}],
-            //     [{x:i+1,y:j},{x:i+1,y:j-1},{x:i+1,y:j-2}]
-            // ],[
-            //     [{x:i,y:j+1},{x:i+1,y:j}],
-            //     [{x:i,y:j+1},{x:i,y:j},{x:i-1,y:j-1}]
-            // ],[
-            //     [{x:i,y:j},{x:i+1,y:j+1}],
-            //     [{x:i-1,y:j+1},{x:i,y:j},{x:i,y:j-1}]
-            // ]],
-            left: [],
-            right: []
+            left: getDatatCoordListByCoord(i,j)['left'],
+            right: getDatatCoordListByCoord(i,j)['right']
         }
+    }
+    // 根据当前中心点获得当前图形的坐标值
+    getSharpCoordList() {
+        return this.getBdaryCoordList()['all']
     }
     // 获取当前形状的底部坐标
     getBottomCoordList() {
@@ -82,9 +42,13 @@ class SharpClass {
     getLeftCoordList() {
         return this.getBdaryCoordList()['left'][this.sharp][this.sharpStatus]
     }
-    // 获取当前形状右侧边界
+    // 获取当前形状右侧边界坐标
     getRightCoordList() {
         return this.getBdaryCoordList()['right'][this.sharp][this.sharpStatus]
+    }
+    // 变形边界
+    getUpCoordList() {
+        return this.getBdaryCoordList()['up'][this.sharp][this.sharpStatus]
     }
     getSharpCoord() {
         return this.getSharpCoordList()[ this.sharp ][ this.sharpStatus ]

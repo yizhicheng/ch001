@@ -1,7 +1,8 @@
 import BgClass from "./bg_class.js"
 import SharpClass from "./sharp_class.js"
-
-
+/**
+ * 主页
+ */
 class Page {
     // 页面属性
     timer
@@ -13,18 +14,30 @@ class Page {
     isStart
     // isBottom 是否到达底部
     isBottom() {
-        let list = this.sharp.getBottomCoordList()
-        console.log('当前图形坐标列表：',list)
+        return this.checkBdary('bottom') == 'bottom'
+    }
+    // 边界检测
+    checkBdary( bdaryFlag ) {
+        let strArr = ['get', bdaryFlag.replace(/^\S/, s => s.toUpperCase()), 'CoordList']
+        let list = this.sharp[strArr.join('')]()
         for( let i=0; i<list.length; i++ ) {
-            let x = list[i].x+1, y = list[i].y, data = this.bg.getData()
-            if( x>=this.rows || data[x][y] == 1 ) {
-                return true
-            }
+            let x = list[i].x, y = list[i].y, data = this.bg.getData()
+            if( x + 1 >= this.rows ) return bdaryFlag
+            if( data[x+1][y] >=1 ) return bdaryFlag
         }
         return false
     }
+    // 到达左方
+    isLeft() {
+        return this.checkBdary('left') == 'left'
+    }
+    isRight() {
+        return this.checkBdary('right') == 'right'
+    }
+    isUp() {
+        return this.checkBdary('up') == 'up'
+    }
     constructor() {
-        // 页面拼接虚拟dom
         // 页面初始化完成之后触发
         document.getElementById("start").addEventListener("click", ( e ) => {
             this.start( this.rows, this.cols )
@@ -49,26 +62,36 @@ class Page {
         this.refresh( 1 )
     }
     up() {
+        if( this.isUp() ) return
         this.clearPre()
         let sh = this.sharp
         sh.sharpStatus = ++sh.sharpStatus % sh.sharpCoordList[sh.sharp].length
         this.drawCurrent()
     }
     down() {
-        this.clearPre()
+        if( this.isBottom() ) return
         let sh = this.sharp
-        sh.sharpCoord.x++
-        this.drawCurrent()
+        if( sh.sharpCoord.x < this.rows -1 ){
+            this.clearPre()
+            sh.sharpCoord.x++
+            this.drawCurrent()
+        }
     }
     left() {
-        this.clearPre()
-        this.sharp.sharpCoord.y--
-        this.drawCurrent()
+        if( this.isLeft() ) return
+        if( this.sharp.sharpCoord.y>1 ) {
+            this.clearPre()
+            this.sharp.sharpCoord.y--
+            this.drawCurrent()
+        }
     }
     right() {
-        this.clearPre()
-        this.sharp.sharpCoord.y++
-        this.drawCurrent()
+        if( this.isRight() ) return
+        if( this.sharp.sharpCoord.y < this.cols - 1) {
+            this.clearPre()
+            this.sharp.sharpCoord.y++
+            this.drawCurrent()
+        }
     }
     start( rows, cols ) {
         this.rows = document.getElementById("rows").value
@@ -91,7 +114,6 @@ class Page {
             this.clearBg()
         }
         this.isStart = !this.isStart
-
     }
     createBg() {
         this.bg = new BgClass( this.rows, this.cols )
