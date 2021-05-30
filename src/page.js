@@ -13,54 +13,62 @@ class Page {
     isStart
     // isBottom 是否到达底部
     isBottom() {
-        return true
+        let list = this.sharp.getBottomCoordList()
+        console.log('当前图形坐标列表：',list)
+        for( let i=0; i<list.length; i++ ) {
+            let x = list[i].x+1, y = list[i].y, data = this.bg.getData()
+            if( x>=this.rows || data[x][y] == 1 ) {
+                return true
+            }
+        }
+        return false
     }
     constructor() {
         // 页面拼接虚拟dom
         // 页面初始化完成之后触发
-        document.getElementById("start").addEventListener("click", ( e ) => {
+        document.getElementById("start").onclick = ( e ) => {
             this.start( this.rows, this.cols )
             e.target.innerText = this.isStart?"结束":"开始"
-            // 监听事件
-            this.initEvent()
-        })
+        }
+        // 监听事件
+        this.initEvent()
     }
     // 页面方法
     initEvent() {
         let eventConfig = {37: 'left', 38: 'up', 39: 'right', 40: 'down'}
+        let hander = ( e ) =>{
+            this[eventConfig[e.keyCode]] && this[eventConfig[e.keyCode]]()
+        }
         // 系统事件
-        document.addEventListener("keydown",( e ) =>{
-            this[eventConfig[e.keyCode]]()
-        })
+        window.onkeyup = hander
     }
-    beforeChange() {
+    clearPre() {
         this.refresh( 0 )
     }
-    afterChange() {
-        this.sharp.setSharpCoordList()
+    drawCurrent() {
         this.refresh( 1 )
     }
     up() {
-        this.beforeChange()
+        this.clearPre()
         let sh = this.sharp
         sh.sharpStatus = ++sh.sharpStatus % sh.sharpCoordList[sh.sharp].length
-        this.afterChange()
+        this.drawCurrent()
     }
     down() {
-        this.beforeChange()
+        this.clearPre()
         let sh = this.sharp
         sh.sharpCoord.x++
-        this.afterChange()
+        this.drawCurrent()
     }
     left() {
-        this.beforeChange()
+        this.clearPre()
         this.sharp.sharpCoord.y--
-        this.afterChange()
+        this.drawCurrent()
     }
     right() {
-        this.beforeChange()
+        this.clearPre()
         this.sharp.sharpCoord.y++
-        this.afterChange()
+        this.drawCurrent()
     }
     start( rows, cols ) {
         this.rows = document.getElementById("rows").value
@@ -70,7 +78,7 @@ class Page {
             let sh = this.sharp = new SharpClass( this.rows, this.cols )
             this.timer = setInterval(function(){
                 // 如果当前形状到达了底部
-                if( !this.isBottom() ) {
+                if( this.isBottom() ) {
                     // 设置到达底部的形状
                     this.refresh( 1 )
                     sh = this.sharp = new SharpClass( this.rows, this.cols )
@@ -108,7 +116,4 @@ class Page {
         bg.draw()
     }
 }
-function main() {
-    new Page()
-}
-main()
+export default Page
