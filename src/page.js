@@ -26,10 +26,10 @@ class Page {
     constructor() {
         // 页面拼接虚拟dom
         // 页面初始化完成之后触发
-        document.getElementById("start").onclick = ( e ) => {
+        document.getElementById("start").addEventListener("click", ( e ) => {
             this.start( this.rows, this.cols )
             e.target.innerText = this.isStart?"结束":"开始"
-        }
+        }, true )
         // 监听事件
         this.initEvent()
     }
@@ -40,7 +40,7 @@ class Page {
             this[eventConfig[e.keyCode]] && this[eventConfig[e.keyCode]]()
         }
         // 系统事件
-        window.onkeyup = hander
+        window.addEventListener("keyup", hander, true)
     }
     clearPre() {
         this.refresh( 0 )
@@ -86,7 +86,6 @@ class Page {
                     this.down()
                 }
             }.bind(this), 1000)
-            this.initEvent()
         } else {
             clearInterval( this.timer )
             this.clearBg()
