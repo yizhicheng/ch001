@@ -1,7 +1,7 @@
 function getBlockId( i, j ) {
     return ['rows',i,'cols',j].join('_')
 }
-const colorConfig = ["#ccc","red"]
+const colorConfig = ["#ccc","#000000"]
 /** 背景类 */
 class BgClass {
     cols
@@ -15,10 +15,13 @@ class BgClass {
     initData( rows, cols ) {
         // 初始化背景的值
         this.data = []
-        for ( let i=0; i<rows; i++ ) {
+        let iLength = rows + 2
+        let jLength = cols + 2
+        for ( let i=0; i<iLength; i++ ) {
             this.data[i] = []
-            for( let j=0; j<cols; j++ ) {
-                this.setData( i, j, 0 )
+            for( let j=0; j<jLength; j++ ) {
+                let v = i==0 || i==iLength - 1 || j==0 || j== jLength -1? 1 : 0
+                this.setData( i, j, v )
             }
         }
     }

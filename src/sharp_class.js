@@ -1,4 +1,4 @@
-import getDatatCoordListByCoord from './coord.js'
+import getDataCoordListByCoord from './coord.js'
 // 获取随机数 0 - v 的随机数
 function randomInt( v ) {
    return Math.floor( ( Math.random() * v ) )
@@ -14,7 +14,7 @@ class SharpClass {
     constructor( rows, cols ) {
         this.sharp = randomInt( 7 )
         this.sharpStatus = 0
-        this.sharpCoord = {x: 1, y: Math.ceil( cols/2 ) - 1}
+        this.sharpCoord = {x: 1, y: Math.ceil( cols/2 )}
     }
     setSharpCoord( i, j ) {
         this.sharpCoord = {x:i, y:j}
@@ -24,10 +24,11 @@ class SharpClass {
         let i = this.sharpCoord.x
         let j = this.sharpCoord.y
         return {
-            all: getDatatCoordListByCoord(i,j)['all'],
-            bottom: getDatatCoordListByCoord(i,j)['bottom'],
-            left: getDatatCoordListByCoord(i,j)['left'],
-            right: getDatatCoordListByCoord(i,j)['right']
+            all: getDataCoordListByCoord(i,j)['all'],
+            down: getDataCoordListByCoord(i,j)['down'],
+            left: getDataCoordListByCoord(i,j)['left'],
+            right: getDataCoordListByCoord(i,j)['right'],
+            up: getDataCoordListByCoord(i,j)['up']
         }
     }
     // 根据当前中心点获得当前图形的坐标值
@@ -35,8 +36,8 @@ class SharpClass {
         return this.getBdaryCoordList()['all']
     }
     // 获取当前形状的底部坐标
-    getBottomCoordList() {
-        return this.getBdaryCoordList()['bottom'][this.sharp][this.sharpStatus]
+    getDownCoordList() {
+        return this.getBdaryCoordList()['down'][this.sharp][this.sharpStatus]
     }
     // 获取当前心中左侧边界坐标
     getLeftCoordList() {

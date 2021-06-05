@@ -1,3 +1,4 @@
+'use strict'
 import BgClass from "./bg_class.js"
 import SharpClass from "./sharp_class.js"
 /**
@@ -29,20 +30,31 @@ class Tires {
         // 系统事件
         window.addEventListener("keyup", hander, true)
     }
-    // isBottom 是否到达底部
-    isBottom() {
-        return this.checkBdary('bottom') == 'bottom'
-    }
     // 边界检测
     checkBdary( bdaryFlag ) {
         let strArr = ['get', bdaryFlag.replace(/^\S/, s => s.toUpperCase()), 'CoordList']
         let list = this.sharp[strArr.join('')]()
         for( let i=0; i<list.length; i++ ) {
             let x = list[i].x, y = list[i].y, data = this.bg.getData()
-            if( x + 1 >= this.rows ) return bdaryFlag
-            if( data[x+1][y] >=1 ) return bdaryFlag
+            switch( bdaryFlag ) {
+                case 'down': 
+                    if( data[x+1][y] >=1 ) return bdaryFlag
+                    break
+                case 'left':
+                    if( data[x][y-1] >= 1 ) return bdaryFlag
+                    break
+                case 'right':
+                    if( data[x][y+1] >= 1 ) return bdaryFlag
+                    break
+                case 'up':
+                    if( data[x][y] >= 1 ) return bdaryFlag
+            }
         }
         return false
+    }
+    // isBottom 是否到达底部
+    isBottom() {
+        return this.checkBdary('down') == 'down'
     }
     // 到达左方
     isLeft() {
@@ -61,43 +73,39 @@ class Tires {
         this.refresh( 1 )
     }
     up() {
+        // 判断是否可以变形
         if( this.isUp() ) return
-        this.clearPre()
         let sh = this.sharp
-        sh.sharpStatus = ++sh.sharpStatus % sh.sharpCoordList[sh.sharp].length
+        this.clearPre()
+        sh.sharpStatus = ++sh.sharpStatus % sh.getSharpCoordList()[sh.sharp].length
         this.drawCurrent()
     }
     down() {
         if( this.isBottom() ) return
         let sh = this.sharp
-        if( sh.sharpCoord.x < this.rows -1 ){
-            this.clearPre()
-            sh.sharpCoord.x++
-            this.drawCurrent()
-        }
+        this.clearPre()
+        sh.sharpCoord.x++
+        this.drawCurrent()
     }
     left() {
         if( this.isLeft() ) return
-        if( this.sharp.sharpCoord.y>1 ) {
-            this.clearPre()
-            this.sharp.sharpCoord.y--
-            this.drawCurrent()
-        }
+        this.clearPre()
+        this.sharp.sharpCoord.y--
+        this.drawCurrent()
     }
     right() {
         if( this.isRight() ) return
-        if( this.sharp.sharpCoord.y < this.cols - 1) {
-            this.clearPre()
-            this.sharp.sharpCoord.y++
-            this.drawCurrent()
-        }
+        this.clearPre()
+        this.sharp.sharpCoord.y++
+        this.drawCurrent()
     }
     start( rows, cols ) {
-        this.rows = document.getElementById("rows").value
-        this.cols = document.getElementById("cols").value
+        this.rows = +document.getElementById("rows").value
+        this.cols = +document.getElementById("cols").value
         if( !this.isStart ) {
             this.createBg()
             let sh = this.sharp = new SharpClass( this.rows, this.cols )
+            // this.draw()
             this.timer = setInterval(function(){
                 // 如果当前形状到达了底部
                 if( this.isBottom() ) {
@@ -117,20 +125,16 @@ class Tires {
     createBg() {
         this.bg = new BgClass( this.rows, this.cols )
         document.getElementById("map").appendChild( this.bg.create() )
+        this.bg.draw()
     }
     clearBg() {
         document.getElementsByTagName("ul")[0].remove()
     }
     // 私有方法
     refresh( v ) {
-        // console.log( this.rows, this.cols )
         let bg = this.bg, sh = this.sharp
         let block = sh.getSharpCoord()
         for( let i=0; i<block.length; i++ ) {
-            block[i].x>=0 &&
-            block[i].y>=0 &&
-            block[i].x<= this.rows &&
-            block[i].y<= this.cols &&
             bg.setData( block[i].x, block[i].y, v )
         }
         bg.draw()
