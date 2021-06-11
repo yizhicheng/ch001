@@ -1,6 +1,7 @@
 'use strict'
 import BgClass from "./bg_class.js"
 import SharpClass from "./sharp_class.js"
+import Score from "./score.js"
 /**
  * 主页
  */
@@ -13,6 +14,8 @@ class Tires {
     sharp
     // isStart 是否已经开启
     isStart
+    // 总分
+    totalScore
     /**
      * 构造函数
      * @return {0}
@@ -54,7 +57,7 @@ class Tires {
     }
     // isBottom 是否到达底部
     isBottom() {
-        return this.checkBdary('down') == 'down'
+        return this.checkBdary('down') == 'down' 
     }
     // 到达左方
     isLeft() {
@@ -105,12 +108,11 @@ class Tires {
         if( !this.isStart ) {
             this.createBg()
             let sh = this.sharp = new SharpClass( this.rows, this.cols )
-            // this.draw()
             this.timer = setInterval(function(){
                 // 如果当前形状到达了底部
                 if( this.isBottom() ) {
                     // 设置到达底部的形状
-                    this.refresh( 1 )
+                    this.scoreSet()
                     sh = this.sharp = new SharpClass( this.rows, this.cols )
                 } else {
                     this.down()
@@ -121,6 +123,12 @@ class Tires {
             this.clearBg()
         }
         this.isStart = !this.isStart
+    }
+    scoreSet(){
+        //计算分数
+        let data = Score.computeScore( this.bg.getData() )
+        this.bg.setDataAll( data ) 
+        document.getElementById("total").innerText = Score.total  
     }
     createBg() {
         this.bg = new BgClass( this.rows, this.cols )

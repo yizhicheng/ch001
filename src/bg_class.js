@@ -1,7 +1,7 @@
 function getBlockId( i, j ) {
     return ['rows',i,'cols',j].join('_')
 }
-const colorConfig = ["#ccc","#000000"]
+const colorConfig = ["#ddd","gray"]
 /** 背景类 */
 class BgClass {
     cols
@@ -50,6 +50,9 @@ class BgClass {
     }
     setData( i, j, v ) {
         this.data[i][j] = v
+    }
+    setDataAll( data ) {
+        this.data = data
     }
     getData() {
         return this.data

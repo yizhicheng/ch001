@@ -13,7 +13,7 @@ class SharpClass {
     sharpStatus
     constructor( rows, cols ) {
         this.sharp = randomInt( 7 )
-        this.sharpStatus = 0
+        this.sharpStatus = randomInt( 2 )
         this.sharpCoord = {x: 1, y: Math.ceil( cols/2 )}
     }
     setSharpCoord( i, j ) {
