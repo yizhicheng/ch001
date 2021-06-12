@@ -1,4 +1,4 @@
-import Tires from './tires.js'
+import Tires from './tires'
 let t = new Tires()
 let handerStart = ( e ) => {
     t.start( t.rows, t.cols )

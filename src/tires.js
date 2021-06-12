@@ -1,7 +1,7 @@
 'use strict'
-import BgClass from "./bg_class.js"
-import SharpClass from "./sharp_class.js"
-import Score from "./score.js"
+import BgClass from "./bg_class"
+import SharpClass from "./sharp_class"
+import Score from "./score"
 /**
  * 主页
  */
@@ -35,8 +35,8 @@ class Tires {
     }
     // 边界检测
     checkBdary( bdaryFlag ) {
-        let strArr = ['get', bdaryFlag.replace(/^\S/, s => s.toUpperCase()), 'CoordList']
-        let list = this.sharp[strArr.join('')]()
+        let funName = ['get', bdaryFlag.replace(/^\S/, s => s.toUpperCase()), 'CoordList'].join('')
+        let list = this.sharp[funName]()
         for( let i=0; i<list.length; i++ ) {
             let x = list[i].x, y = list[i].y, data = this.bg.getData()
             switch( bdaryFlag ) {
@@ -130,6 +130,10 @@ class Tires {
         this.bg.setDataAll( data ) 
         document.getElementById("total").innerText = Score.total  
     }
+    /**
+     * 创建背景格子
+     * @return {[type]} [description]
+     */
     createBg() {
         this.bg = new BgClass( this.rows, this.cols )
         document.getElementById("map").appendChild( this.bg.create() )

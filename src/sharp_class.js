@@ -1,4 +1,4 @@
-import getDataCoordListByCoord from './coord.js'
+import getDataCoordListByCoord from './coord'
 // 获取随机数 0 - v 的随机数
 function randomInt( v ) {
    return Math.floor( ( Math.random() * v ) )

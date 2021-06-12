@@ -1,7 +1,7 @@
 function getBlockId( i, j ) {
     return ['rows',i,'cols',j].join('_')
 }
-const colorConfig = ["#ddd","gray"]
+const colorConfig = ["#ddd","red","gray"]
 /** 背景类 */
 class BgClass {
     cols
@@ -20,7 +20,7 @@ class BgClass {
         for ( let i=0; i<iLength; i++ ) {
             this.data[i] = []
             for( let j=0; j<jLength; j++ ) {
-                let v = i==0 || i==iLength - 1 || j==0 || j== jLength -1? 1 : 0
+                let v = i==0 || i==iLength - 1 || j==0 || j== jLength -1? 2 : 0
                 this.setData( i, j, v )
             }
         }
