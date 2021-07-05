@@ -7,7 +7,6 @@ class BgClass {
     constructor( rows, cols ) {
         this.cols = cols
         this.rows = rows
-		this.kkk = 'kkk'
         this.initData( rows, cols )
     }
     initData( rows, cols ) {
