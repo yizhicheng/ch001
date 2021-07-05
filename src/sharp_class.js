@@ -5,12 +5,6 @@ function randomInt( v ) {
 }
 /** 形状类 */
 class SharpClass {
-    // 形状 0 条 1...
-    sharp
-    // 形状的中心点
-    sharpCoord
-    // 形状的状态列表
-    sharpStatus
     constructor( rows, cols ) {
         this.sharp = randomInt( 7 )
         this.sharpStatus = randomInt( 2 )

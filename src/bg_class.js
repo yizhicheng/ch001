@@ -4,12 +4,10 @@ function getBlockId( i, j ) {
 const colorConfig = ["#ddd","red","gray"]
 /** 背景类 */
 class BgClass {
-    cols
-    rows
-    data
     constructor( rows, cols ) {
         this.cols = cols
         this.rows = rows
+		this.kkk = 'kkk'
         this.initData( rows, cols )
     }
     initData( rows, cols ) {

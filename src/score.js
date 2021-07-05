@@ -2,7 +2,6 @@
  * 分数类用于计算分数等 100,300,600,1000
  */
 class Score {
-	total // 总分
 	constructor() {
 		this.scoreConfig = [100,300,600,1000]
 		this.total = 0

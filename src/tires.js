@@ -6,16 +6,6 @@ import Score from "./score"
  * 主页
  */
 class Tires {
-    // 页面属性
-    timer
-    // 当前背景
-    bg
-    // 当前形状
-    sharp
-    // isStart 是否已经开启
-    isStart
-    // 总分
-    totalScore
     /**
      * 构造函数
      * @return {0}
@@ -80,7 +70,7 @@ class Tires {
         if( this.isUp() ) return
         let sh = this.sharp
         this.clearPre()
-        sh.sharpStatus = ++sh.sharpStatus % sh.getSharpCoordList()[sh.sharp].length
+        sh.sharpStatus = (sh.sharpStatus+1) % sh.getSharpCoordList()[sh.sharp].length
         this.drawCurrent()
     }
     down() {
